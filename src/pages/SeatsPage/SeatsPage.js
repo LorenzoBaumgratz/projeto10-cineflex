@@ -17,13 +17,13 @@ export default function SeatsPage() {
         promise.catch((err) => console.log(err));
 
     }, [])
-    if(info.length==0||assentos.length ==0){
-        return(
+    if (info.length === 0 || assentos.length === 0) {
+        return (
             <div>carregando</div>
         )
     }
 
-    function selecionarAssento(i){
+    function selecionarAssento(i) {
         // console.log(i)
         //      if(i.isAvailable==false)
         //      return "indisponivel"
@@ -39,36 +39,36 @@ export default function SeatsPage() {
 
             <SeatsContainer>
                 {assentos.map((a) =>
-                    <SeatItem onClick={(()=>selecionarAssento(a))} estado={a.isAvailable}>{a.name}</SeatItem>
+                    <SeatItem onClick={(() => selecionarAssento(a))} estado={a.isAvailable} data-test="seat">{a.name}</SeatItem>
                 )}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle marcador="selecionado"/>
+                    <CaptionCircle marcador="selecionado" />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle marcador="disponivel"/>
+                    <CaptionCircle marcador="disponivel" />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle marcador="indisponivel"/>
+                    <CaptionCircle marcador="indisponivel" />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input placeholder="Digite seu nome..." data-test="client-name" />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input placeholder="Digite seu CPF..." data-test="client-cpf" />
 
-                <button>Reservar Assento(s)</button>
+                <button data-test="book-seat-btn">Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={info.movie.posterURL} alt="poster" />
                 </div>
@@ -125,22 +125,21 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid ${props=>{
-        if(props.marcador=="selecionado")
-        return "#0e7d71"
-        if(props.marcador=="disponivel")
-        return "#7b8b99"
-        if(props.marcador=="indisponivel")
-        return "#f7c52b"
-
+    border: 1px solid ${props => {
+        if (props.marcador === "selecionado")
+            return "#0e7d71"
+        if (props.marcador === "disponivel")
+            return "#7b8b99"
+        if (props.marcador === "indisponivel")
+            return "#f7c52b"
     }};         // Essa cor deve mudar
-    background-color: ${props=>{
-        if(props.marcador=="selecionado")
-        return "#1aae9e"
-        if(props.marcador=="disponivel")
-        return "#c3cfd9"
-        if(props.marcador=="indisponivel")
-        return "#fbe192"
+    background-color: ${props => {
+        if (props.marcador === "selecionado")
+            return "#1aae9e"
+        if (props.marcador === "disponivel")
+            return "#c3cfd9"
+        if (props.marcador === "indisponivel")
+            return "#fbe192"
 
     }};   // Essa cor deve mudar
     height: 25px;
@@ -159,13 +158,13 @@ const CaptionItem = styled.div`
 `
 const SeatItem = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
-    background-color: ${props=>{
+    background-color: ${props => {
         // if(props.marcador=="selecionado")
         // return "#1aae9e"
         // if(props.marcador=="disponivel")
         // return "#c3cfd9"
-        if(props.estado==false)
-        return "#fbe192"
+        if (props.estado === false)
+            return "#fbe192"
 
     }};     // Essa cor deve mudar
     height: 25px;
