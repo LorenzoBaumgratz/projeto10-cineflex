@@ -1,30 +1,59 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"
 import styled from "styled-components"
 
 export default function SeatsPage() {
+    const params = useParams()
+    const [assentos, setAssentos] = useState([]);
+    const [info, setInfo] = useState([]);
+    useEffect(() => {
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${params.idSessao}/seats`);
+        promise.then((res) => {
+            setInfo(res.data)
+            setAssentos(res.data.seats)
+            console.log(res.data)
+        });
+        promise.catch((err) => console.log(err));
+
+    }, [])
+    if(info.length==0||assentos.length ==0){
+        return(
+            <div>carregando</div>
+        )
+    }
+
+    function selecionarAssento(i){
+        // console.log(i)
+        //      if(i.isAvailable==false)
+        //      return "indisponivel"
+        //     if(props.marcador=="disponivel")
+        //     return "#7b8b99"
+        //     if(props.marcador=="indisponivel")
+        //     return "#f7c52b"
+    }
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {assentos.map((a) =>
+                    <SeatItem onClick={(()=>selecionarAssento(a))} estado={a.isAvailable}>{a.name}</SeatItem>
+                )}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle marcador="selecionado"/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle marcador="disponivel"/>
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle marcador="indisponivel"/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -41,11 +70,11 @@ export default function SeatsPage() {
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={info.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{info.movie.title}</p>
+                    <p>{info.day.weekday} - {info.name}</p>
                 </div>
             </FooterContainer>
 
@@ -96,8 +125,24 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${props=>{
+        if(props.marcador=="selecionado")
+        return "#0e7d71"
+        if(props.marcador=="disponivel")
+        return "#7b8b99"
+        if(props.marcador=="indisponivel")
+        return "#f7c52b"
+
+    }};         // Essa cor deve mudar
+    background-color: ${props=>{
+        if(props.marcador=="selecionado")
+        return "#1aae9e"
+        if(props.marcador=="disponivel")
+        return "#c3cfd9"
+        if(props.marcador=="indisponivel")
+        return "#fbe192"
+
+    }};   // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -114,7 +159,15 @@ const CaptionItem = styled.div`
 `
 const SeatItem = styled.div`
     border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    background-color: ${props=>{
+        // if(props.marcador=="selecionado")
+        // return "#1aae9e"
+        // if(props.marcador=="disponivel")
+        // return "#c3cfd9"
+        if(props.estado==false)
+        return "#fbe192"
+
+    }};     // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
