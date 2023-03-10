@@ -59,7 +59,7 @@ export default function SeatsPage(props) {
                 cpf: props.cpf
             }
         )
-        navigate("/sucesso");
+        post.then((res)=>navigate("/sucesso"));
 
     }
 
