@@ -91,10 +91,10 @@ export default function SeatsPage(props) {
             <FormContainer>
                 <form onSubmit={formulario}>
                     Nome do Comprador:
-                    <input type="text" placeholder="Digite seu nome..." data-test="client-name" required onChange={e => props.setNome(e.target.value)} />
+                    <input type="text" placeholder="Digite seu nome..." data-test="client-name" required value={props.nome} onChange={e => props.setNome(e.target.value)} />
 
                     CPF do Comprador:
-                    <input type="number" placeholder="Digite seu CPF..." data-test="client-cpf" required onChange={e => props.setCpf(e.target.value)} />
+                    <input type="number" placeholder="Digite seu CPF..." data-test="client-cpf" required value={props.cpf} onChange={e => props.setCpf(e.target.value)} />
 
                     <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
                 </form>
