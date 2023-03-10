@@ -1,36 +1,66 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
-export default function SeatsPage() {
+export default function SeatsPage(props) {
     const params = useParams()
     const [assentos, setAssentos] = useState([]);
-    const [info, setInfo] = useState([]);
+    const navigate = useNavigate();
+
     useEffect(() => {
         const promise = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${params.idSessao}/seats`);
         promise.then((res) => {
-            setInfo(res.data)
+            props.setInfo(res.data)
             setAssentos(res.data.seats)
-            console.log(res.data)
+            console.log("info",res.data)
         });
         promise.catch((err) => console.log(err));
 
     }, [])
-    if (info.length === 0 || assentos.length === 0) {
+    if (props.info.length === 0 || assentos.length === 0) {
         return (
             <div>carregando</div>
         )
     }
 
     function selecionarAssento(i) {
-        // console.log(i)
-        //      if(i.isAvailable==false)
-        //      return "indisponivel"
-        //     if(props.marcador=="disponivel")
-        //     return "#7b8b99"
-        //     if(props.marcador=="indisponivel")
-        //     return "#f7c52b"
+        if (i.isAvailable === false) {
+            alert("Esse assento não está disponível");
+        } else {
+            if (props.reservar.includes(i.id) === true) {
+                const newArr = props.reservar.filter((item) => item !== i.id);
+                props.setReservar(newArr);
+                console.log("Novo arr de ID", newArr);
+
+                const newArrNum = props.reservarNum.filter((item) => item !== i.name);
+                props.setReservarNum(newArrNum);
+                console.log("Novo arr num", newArrNum);
+            } else {
+                props.setReservar([...props.reservar, i.id]);
+                console.log("array reservados ID", [...props.reservar, i.id])
+
+                props.setReservarNum([...props.reservarNum, i.name]);
+                console.log("array reservados num", [...props.reservarNum, i.name])
+            }
+        }
+    }
+
+    function formulario(e) {
+        e.preventDefault();
+        console.log("Nome", props.nome);
+        console.log("CPF", props.cpf);
+        console.log("array reservados submit", props.reservar);
+
+        const post = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many",
+            {
+                ids: props.reservar,
+                name: props.nome,
+                cpf: props.cpf
+            }
+        )
+        navigate("/sucesso");
+
     }
 
     return (
@@ -39,7 +69,7 @@ export default function SeatsPage() {
 
             <SeatsContainer>
                 {assentos.map((a) =>
-                    <SeatItem onClick={(() => selecionarAssento(a))} estado={a.isAvailable} data-test="seat">{a.name}</SeatItem>
+                    <SeatItem onClick={(() => selecionarAssento(a))} estado={a.isAvailable} assentos={props.reservar} numero={a.id} data-test="seat">{a.name}</SeatItem>
                 )}
             </SeatsContainer>
 
@@ -59,22 +89,24 @@ export default function SeatsPage() {
             </CaptionContainer>
 
             <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." data-test="client-name" />
+                <form onSubmit={formulario}>
+                    Nome do Comprador:
+                    <input type="text" placeholder="Digite seu nome..." data-test="client-name" required onChange={e => props.setNome(e.target.value)} />
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." data-test="client-cpf" />
+                    CPF do Comprador:
+                    <input type="number" placeholder="Digite seu CPF..." data-test="client-cpf" required onChange={e => props.setCpf(e.target.value)} />
 
-                <button data-test="book-seat-btn">Reservar Assento(s)</button>
+                    <button type="submit" data-test="book-seat-btn">Reservar Assento(s)</button>
+                </form>
             </FormContainer>
 
             <FooterContainer data-test="footer">
                 <div>
-                    <img src={info.movie.posterURL} alt="poster" />
+                    <img src={props.info.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>{info.movie.title}</p>
-                    <p>{info.day.weekday} - {info.name}</p>
+                    <p>{props.info.movie.title}</p>
+                    <p>{props.info.day.weekday} - {props.info.name}</p>
                 </div>
             </FooterContainer>
 
@@ -157,16 +189,24 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
+    border: 1px solid ${props => {
+        if (props.assentos.includes(props.numero) === true && props.estado === true)
+            return "#0e7d71"
+        if (props.assentos.includes(props.numero) === false && props.estado === true)
+            return "#7b8b99"
+        if (props.estado === false)
+            return "#f7c52b"
+
+    }};          // Essa cor deve mudar
     background-color: ${props => {
-        // if(props.marcador=="selecionado")
-        // return "#1aae9e"
-        // if(props.marcador=="disponivel")
-        // return "#c3cfd9"
+        if (props.assentos.includes(props.numero) === true && props.estado === true)
+            return "#1aae9e"
+        if (props.assentos.includes(props.numero) === false && props.estado === true)
+            return "#c3cfd9"
         if (props.estado === false)
             return "#fbe192"
 
-    }};     // Essa cor deve mudar
+    }};     
     height: 25px;
     width: 25px;
     border-radius: 25px;

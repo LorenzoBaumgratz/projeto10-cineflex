@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import styled from "styled-components"
 import HomePage from "./pages/HomePage/HomePage"
@@ -6,15 +7,25 @@ import SessionsPage from "./pages/SessionsPage/SessionsPage"
 import SuccessPage from "./pages/SuccessPage/SuccessPage"
 
 export default function App() {
-    return (
+    const [info, setInfo] = useState([]);
+    const [reservar, setReservar] = useState([])
+    const [nome, setNome] = useState([]);
+    const [cpf, setCpf] = useState([]);
+    const [reservarNum,setReservarNum]=useState([])
 
+    function reset(){
+        setReservarNum([])
+        setReservar([])
+    }
+
+    return (
         <BrowserRouter>
             <NavContainer>CINEFLEX</NavContainer>
             <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={<HomePage/>} />
                 <Route path="/sessoes/:idFilme" element={<SessionsPage />} />
-                <Route path="/assentos/:idSessao" element={<SeatsPage />} />
-                <Route path="/sucesso" element={<SuccessPage />} />
+                <Route path="/assentos/:idSessao" element={<SeatsPage info={info} setInfo={setInfo} reservar={reservar} setReservar={setReservar} nome={nome} setNome={setNome} cpf={cpf} setCpf={setCpf} reservarNum={reservarNum} setReservarNum={setReservarNum}/>} />
+                <Route path="/sucesso" element={<SuccessPage info={info} reservar={reservar} nome={nome} cpf={cpf} reservarNum={reservarNum} reset={reset}/>} />
             </Routes>
         </BrowserRouter>
     )

@@ -4,7 +4,6 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function HomePage() {
-
     const [listaFilmes, setListafilmes] = useState([])
     
     useEffect(() => {
