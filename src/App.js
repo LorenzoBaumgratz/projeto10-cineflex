@@ -14,8 +14,8 @@ export default function App() {
     const [reservarNum,setReservarNum]=useState([])
 
     function reset(){
-        setReservarNum([])
-        setReservar([])
+        setReservarNum([]);
+        setReservar([]);
     }
 
     return (
